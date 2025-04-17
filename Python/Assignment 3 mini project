@@ -1,0 +1,61 @@
+import random
+
+# Define the snakes and ladders on the board
+snakes = {16: 6, 47: 26, 49: 11, 56: 53, 62: 19, 64: 60, 87: 24, 93: 73, 95: 75, 98: 78}
+ladders = {1: 38, 4: 14, 9: 31, 21: 42, 28: 84, 36: 44, 51: 67, 71: 91, 80: 100}
+
+class Player:
+    def __init__(self, name):
+        self.name = name
+        self.position = 0
+
+    def move(self, steps):
+        if self.position + steps <= 100:
+            self.position += steps
+            print(f"{self.name} moves to {self.position}")
+            # Check for snakes or ladders
+            if self.position in snakes:
+                print(f"Oh no! {self.name} got bitten by a snake and slides down to {snakes[self.position]}")
+                self.position = snakes[self.position]
+            elif self.position in ladders:
+                print(f"Yay! {self.name} climbs a ladder to {ladders[self.position]}")
+                self.position = ladders[self.position]
+        else:
+            print(f"{self.name} rolled too high to move.")
+
+def roll_dice():
+    return random.randint(1, 6)
+
+def play_game():
+    player1 = Player("Player 1")
+    player2 = Player("Player 2")
+    players = [player1, player2]
+    turn = 0
+
+    while True:
+        current_player = players[turn % 2]
+        print(f"\n{current_player.name}'s turn:")
+        rolls = 0
+        extra_turn = True
+        while extra_turn and rolls < 3:
+            dice = roll_dice()
+            print(f"{current_player.name} rolled a {dice}")
+            if dice == 6:
+                rolls += 1
+                current_player.move(dice)
+                if rolls == 3:
+                    print(f"{current_player.name} rolled three 6s in a row. Turn ends.")
+                    break
+                else:
+                    print(f"{current_player.name} gets an extra turn!")
+            else:
+                current_player.move(dice)
+                extra_turn = False
+
+            if current_player.position == 100:
+                print(f"\n🎉 {current_player.name} wins the game! 🎉")
+                return
+        turn += 1
+
+if __name__ == "__main__":
+    play_game()
